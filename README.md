@@ -1,4 +1,4 @@
-# Lab 06: 
+# Lab 06: Analog Signals and the ADC/DAC
 
 Authors : Kyle G. Gayliyev <br>
 Date: 25-March-2024<br>
@@ -10,21 +10,62 @@ Copyright: ECE 6780, Kyle G. Gayliyev - This work may not be copied for use in A
 
 ## Overview of the Lab 06
 
+The exercises in this section introduce the basic operation of the ADC and DAC peripherals. Each exercise is standalone; you may, however, implement them together in the main application loop without conflict.
+
+### Required Materials:
+* STM32F072 Discovery board
+* oscilloscope
+* potentiometer
+* jumper wires
 
 Lab 6 is consisted of 2 Parts:<br>
 
-* Part 1: 
-* Part 2: 
+* Part 1: Measuring a Potentiometer With the ADC.
+* Part 2: Generating Waveforms with the DAC.
 
 
-### Part 1: 
-Instructions:<br>
-#### 
+### Part 1: Measuring a Potentiometer With the ADC.
+The goal of this exercise is to use the ADC to measure the position of a potentiometer and display the result using the LEDs on the Discovery board. Each LED will have a threshold voltage/value that will cause it to turn on if the measured output of the ADC exceeds that value; likewise, they should turn off if the value drops below the threshold. When turning the potentiometer so that the output (center) pin’s voltage increases, the LEDs should light up in sequence.<br>
 
-### Part 2: 
 Instructions:<br>
 
-#### 
+1. Initialize the LED pins to output. 
+2. Select a GPIO pin to use as the ADC input. 
+* Remember that the “ADC_INx” additional/analog function indicates which ADC input channel the pin connects to. 
+* Configure the pin to analog mode, no pull-up/down resistors. 
+* Connect the output (center pin) of a potentiometer to the input pin. The other two pins of the potentiometer should be connected to 3V and GND. 
+3. Enable the ADC1 in the RCC peripheral. 
+4. Configure the ADC to 8-bit resolution, continuous conversion mode, hardware triggers disabled (software trigger only). 
+5. Select/enable the input pin’s channel for ADC conversion. 
+6. Perform a self-calibration, enable, and start the ADC. 
+* The lab manual describes the basic procedure without mentioning the actual flags and conditions for advancement. 
+* Use sections 13.4.1 (Calibration) and 13.4.2 (ADC on-off control) in the peripheral reference manual. 
+7. In the main application loop, read the ADC data register and turn on/off LEDs depending on the value. 
+* Use four increasing threshold values, each LED should have a minimum ADC value/- voltage to turn on. 
+* As the voltage on the input pin increases, the LEDs should light one-by-one. 
+* If the pin voltage decreases below the threshold for a LED, it should turn off.
+
+### Part 2: Generating Waveforms with the DAC.
+The goal of this exercise is to generate an analog waveform that can be viewed using either an oscilloscope or the analog input of a Saleae logic analyzer.
+Instructions:<br>
+
+1. Select a GPIO pin to use as the DAC output. 
+* Remember that the “DAC_OUTx” additional/analog function indicates which DAC output channel the pin connects to. 
+* Configure the pin to analog mode, no pull-up/down resistors. 
+* Connect an oscilloscope probe or channel 0 of a Saleae logic analyzer to the pin.
+* Remember that the old Saleae 16’s available for checkout do not have analog capabilities. Unless you have a new-model logic analyzer, you will need to use an oscilloscope.
+
+2. Set the used DAC channel to software trigger mode. 
+3. Enable the used DAC channel. 
+4. Copy one of the wave-tables in figure 6.8 into your application. 
+* The wave tables are 32-element arrays of unsigned 8-bit values. 
+* Don’t use the square-wave. Pick one of the sine, triangle, or sawtooth waveforms. 
+5. In the main application loop, use an index variable to write the next value in the wave-table (array) to the appropriate DAC data register. 
+* Use the one that matches closest to the value type of the wave-table. 
+6. Use a 1ms delay between updating the DAC to new values. 
+* The resulting frequency of the waveform will be: 1 kHz (1ms between updates) / 32 samples per cycle / 31 Hz 
+7. Submit a screen capture or photograph of the oscilloscope or logic capture in your postlab.
+
 
 #### Exercise Specifications
 
@@ -120,26 +161,10 @@ Have a wonderful day!
 N/A
 
 # Caution/Warnings
-* Set the START bit in the CR2 register after configuring the slave 
-address and transaction length. Similar to how the PE bit locks 
-system-wide configurations, setting the START bit locks the 
-transaction parameters until the peripheral has completed the address frame.
+* One common source of confusion when first using the ADC is that many of the bits in the control register are not only used to control the peripheral, but are also modified by hardware as status flags. 
 
-* Ensure that PB11 and PB13 are set to open-drain output type. 
-Otherwise, the I2C slave will not be able to respond during 
-communication. Leave PB15 in input mode since it is connected 
-to PB11 through a jumper wire. Modifying the mode of pin PB15 
-could cause a conflict if the two pins try to output different 
-logic states.
+* An example of this is the self-calibration. Once the user triggers a calibration cycle by setting the appropriate bit, the ADC will clear that same bit when calibration is complete. Most of the bits in the control register have strict requirements for when the ADC will allow you to set them. You will need to read the bit descriptions to know what you are allowed to configure before/after each step.
 
-* Most I2C devices will automatically advance to the next 
-register when you attempt to read multiple data bytes. The 
-L3GD20 also contains this feature, but you must explicitly 
-request this feature when writing the starting register 
-address. In order to read multiple bytes, you must set 
-the most significant bit of the starting register 
-address; otherwise the device will repeatedly send 
-the same register data for each byte requested.
 
 
 # Examples of Good Software Practice (GSP)
