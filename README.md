@@ -85,14 +85,16 @@ On Mon, 25th of March-2024, these tasks are completed:
 - Created the "Lab6_ECE6780Embedded_SR24" GitHub repo.
 - Created the "lab06" project using STM32CubeMX Software
 
+<ins>2nd Week Notes:</ins> <br>
 
+- It was a challenging lab.
 ## Testing
 No Unit Test files are created as the nature of the project. Manual testing 
 are performed in each step to ensure code improvements. Check "Testing Instructions"
 section below.
 
 # Time Expenditures:
-<pre>Lab06: Predicted Hours: 12h		Actual Hours:	Xh		 </pre>
+<pre>Lab06: Predicted Hours: 12h		Actual Hours:	12h		 </pre>
 
 The actual hours recorded on top reflect the time spent for the assignment including the time 
 spent in labs. It excludes time spent reading and understanding the lab assignment instructions 
